@@ -153,6 +153,7 @@ class Woocommerce_Food_Booking {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'init', $plugin_admin, 'init' );
 
 	}
 
@@ -169,6 +170,17 @@ class Woocommerce_Food_Booking {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'woocommerce_before_add_to_cart_button', $plugin_public, 'before_add_to_cart' );
+		
+		$this->loader->add_filter( 'woocommerce_add_cart_item_data', $plugin_public, 'add_date_time_to_cart_item', 25, 2 );
+		$this->loader->add_filter( 'woocommerce_get_item_data', $plugin_public, 'display_delivery_date_time', 25, 2 );
+
+		$this->loader->add_action( 'woocommerce_checkout_create_order_line_item', $plugin_public, 'checkout_update_order_meta_with_delivery_datetime', 10, 4 );
+		$this->loader->add_filter( 'woocommerce_display_item_meta', $plugin_public, 'display_item_meta', 10, 3 );
+		// $this->loader->add_filter( 'woocommerce_hidden_order_itemmeta', $plugin_public, 'hidden_order_itemmeta' );
+		$this->loader->add_filter( 'woocommerce_order_item_get_formatted_meta_data', $plugin_public, 'order_item_formatted_meta_data', 10, 2 );
+		// $this->loader->add_filter( 'woocommerce_order_item_display_meta_value', $plugin_public, 'order_item_display_meta_key' );
+		// $this->loader->add_action( 'woocommerce_add_cart_validation', $plugin_public, 'add_date_time_to_cart_item' );
 
 	}
 

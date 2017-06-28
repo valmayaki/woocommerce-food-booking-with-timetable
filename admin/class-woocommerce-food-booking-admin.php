@@ -95,9 +95,57 @@ class Woocommerce_Food_Booking_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
+		
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/woocommerce-food-booking-admin.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	/**
+	 * Register methods for init hook
+	 * 
+	 * @return void
+	 */
+	public function init()
+	{
+		$this->register_vendor_taxonomy();
+	}
+
+	/**
+	 * Registers Taxaonomy
+	 * 
+	 * @return  void
+	 */
+	public function register_vendor_taxonomy()
+	{
+		 $labels = array(
+	        'name'                  =>  _x( 'Vendors', 'taxonomy general name' ),
+	        'singular_name'         =>  _x( 'Vendor', 'taxonomy singular name' ),
+	        'search_items'          =>  __( 'Search Vendors' ),
+	        'all_items'             =>  __( 'All Vendors' ),
+	        'parent_item'           =>  __( 'Parent Vendor' ),
+	        'parent_item_colon'     =>  __( 'Parent Vendor:' ),
+	        'edit_item'             =>  __( 'Edit Vendor' ),
+	        'update_item'           =>  __( 'Update Vendor' ),
+	        'add_new_item'          =>  __( 'Add New Vendor' ),
+	        'new_item_name'         =>  __( 'New Vendor Name' ),
+	        'menu_name'             =>  __( 'Vendors' ),
+    		'choose_from_most_used' =>  __( 'Choose from the most used Vendors' ),
+	    );
+	 
+	    $args = array(
+	        'hierarchical'      => true,
+	        'labels'            => $labels,
+	        'show_ui'           => true,
+	        'show_admin_column' => true,
+	        'query_var'         => true,
+	        'rewrite'           => array( 'slug' => 'vendor' ),
+	        'show_in_nav_menus' => true,
+	        'show_tag_cloud'    => true,
+	        'public'    		=> true,
+	    );
+	 
+	    register_taxonomy( 'vendor', array( 'product' ), $args );
+		register_taxonomy_for_object_type( 'vendor', 'product' );
 	}
 
 }
