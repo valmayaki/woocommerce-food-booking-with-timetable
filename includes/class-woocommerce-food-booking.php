@@ -180,7 +180,7 @@ class Woocommerce_Food_Booking {
 		// $this->loader->add_filter( 'woocommerce_hidden_order_itemmeta', $plugin_public, 'hidden_order_itemmeta' );
 		$this->loader->add_filter( 'woocommerce_order_item_get_formatted_meta_data', $plugin_public, 'order_item_formatted_meta_data', 10, 2 );
 		// $this->loader->add_filter( 'woocommerce_order_item_display_meta_value', $plugin_public, 'order_item_display_meta_key' );
-		// $this->loader->add_action( 'woocommerce_add_cart_validation', $plugin_public, 'add_date_time_to_cart_item' );
+		$this->loader->add_filter( 'woocommerce_add_to_cart_validation', $plugin_public, 'delivery_date_time_validation', 10, 3 );
 
 	}
 

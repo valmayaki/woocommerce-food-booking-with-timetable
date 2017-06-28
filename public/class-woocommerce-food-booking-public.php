@@ -119,6 +119,8 @@ class Woocommerce_Food_Booking_Public {
 
 	public function before_add_to_cart()
 	{
+		//@note if( has_term( array('term1', 'term2', 'term3'), 'product_cat' ) )
+		//for consideration of adding field based on term
 		global $post, $wpdb, $woocommerce, $product;
 		$dateOption = json_encode(array(
 			'showButtonPanel' => true
@@ -163,9 +165,23 @@ class Woocommerce_Food_Booking_Public {
 			</script>
 		<?php
 	}
+	function delivery_date_time_validation($true, $product_id, $quantity) { 
+		//@todo add check to know if delivery date or time is enabled for product
+		// probably use term to check its is enabled for term
+	    if ( empty( $_REQUEST['delivery_date_for_product'] ) ) {
+	        wc_add_notice( __( 'Please select your Delivery date;', 'woocommerce' ), 'error' );
+	        return false;
+	    }
+	    if ( empty( $_REQUEST['delivery_time_for_product'] ) ) {
+	        wc_add_notice( __( 'Please select your Delivery time', 'woocommerce' ), 'error' );
+	        return false;
+	    }
+	    return true;
+	}
 
 	public function add_date_time_to_cart_item($cart_item_meta, $product_id)
 	{
+		//@todo add check to know if delivery date or time is enabled for product
 		if ( isset( $_POST[ 'delivery_date_for_product' ] ) ) {
             $delivery_date = $_POST[ 'delivery_date_for_product' ];
         }
