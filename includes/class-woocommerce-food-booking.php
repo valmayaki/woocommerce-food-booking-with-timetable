@@ -155,6 +155,7 @@ class Woocommerce_Food_Booking {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'init', $plugin_admin, 'init' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_menus' );
+		$this->loader->add_action( 'wp_ajax_order_items_with_delivery_date', $plugin_admin, 'get_order_with_delivery_date' );
 
 	}
 

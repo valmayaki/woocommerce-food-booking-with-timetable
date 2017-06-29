@@ -29,11 +29,12 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 	$(document).ready(function(){
-		
+
 		$('#order-delivery-calendar').fullCalendar({
 		    dayClick: function() {
 		        alert('a day has been clicked!');
-		    }
+		    },
+		    events: ajaxurl+'?action=order_items_with_delivery_date'
 		});
 	})
 

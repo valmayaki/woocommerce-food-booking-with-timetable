@@ -181,4 +181,30 @@ class Woocommerce_Food_Booking_Admin {
 		include 'partials/order-delivery-timetable.php';
 	}
 
+	public function get_order_with_delivery_date()
+	{
+
+		$orders = wc_get_orders(array(
+			'numberposts' => -1,
+		));
+		$item_events = array();
+		foreach($orders as $order){
+			foreach ($order->get_items() as $item) {
+				$product = $order->get_product_from_item($item);
+				if(isset($item['_delivery_date'])){
+
+					$delivery_date = $item['_delivery_date'];
+					$item_events[] = array(
+						'title' => $product->name,
+						'start' => $delivery_date,
+					);
+				}
+			}
+		}
+		header('Content-Type: application/json; charset=utf-8');
+		echo json_encode($item_events);
+		wp_die();
+
+	}
+
 }
