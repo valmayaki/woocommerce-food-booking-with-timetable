@@ -59,7 +59,7 @@ class Woocommerce_Food_Booking_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles($hook) {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -72,8 +72,12 @@ class Woocommerce_Food_Booking_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/woocommerce-food-booking-admin.css', array(), $this->version, 'all' );
+		if ($hook == 'woocommerce_page_order_delivery_timetable'){
+			//wp_enqueue_style( 'full-calendar-css', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css', '3.4.0', 'all' );
+			// wp_enqueue_style( 'full-calendar-css', 'https://test.materialcoder.com/dark/assets/css/theme-3/libs/fullcalendar/fullcalendar.css', '3.4.0', 'all' );
+			wp_enqueue_style( 'full-calendar-material', plugin_dir_url( __FILE__ ) . 'css/fullcalendar.css', array(), $this->version, 'all' );
+			wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/woocommerce-food-booking-admin.css', array(), $this->version, 'all' );
+		}
 
 	}
 
@@ -82,7 +86,7 @@ class Woocommerce_Food_Booking_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts($hook) {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -95,8 +99,14 @@ class Woocommerce_Food_Booking_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/woocommerce-food-booking-admin.js', array( 'jquery' ), $this->version, false );
+		if($hook == 'woocommerce_page_order_delivery_timetable'){
+			wp_enqueue_script('jquery');
+			wp_enqueue_script('moment-js', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js', array(), '3.4.0');
+			wp_enqueue_script('full-calendar-js', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js', array('jquery'), '3.4.0');
+			wp_enqueue_script('angular-ui-calender', 'https://cdnjs.cloudflare.com/ajax/libs/angular-ui-calendar/1.0.0/calendar.min.js', array('jquery','angularjs'), '3.4.0');
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/woocommerce-food-booking-admin.js', array( 'jquery' ), $this->version, false );
+		}
+
 
 	}
 
@@ -108,6 +118,24 @@ class Woocommerce_Food_Booking_Admin {
 	public function init()
 	{
 		$this->register_vendor_taxonomy();
+	}
+
+	/**
+	 * Register Menu for plugin
+	 * 
+	 * @return void
+	 */
+	public function register_menus()
+	{
+		add_submenu_page(
+		    'woocommerce',
+		    "Order Delivery TimeTable",
+		    "Order Delivery Timetable",
+		    'manage_woocommerce',
+		    'order_delivery_timetable',
+		    array($this, 'register_order_delivery_timetable_submenu')
+		);
+
 	}
 
 	/**
@@ -146,6 +174,11 @@ class Woocommerce_Food_Booking_Admin {
 	 
 	    register_taxonomy( 'vendor', array( 'product' ), $args );
 		register_taxonomy_for_object_type( 'vendor', 'product' );
+	}
+
+	public function register_order_delivery_timetable_submenu()
+	{
+		include 'partials/order-delivery-timetable.php';
 	}
 
 }
