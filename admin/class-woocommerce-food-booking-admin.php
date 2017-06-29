@@ -196,7 +196,7 @@ class Woocommerce_Food_Booking_Admin {
 					$delivery_date = $item['_delivery_date'];
 					$item_events[] = array(
 						'title' => $product->name,
-						'start' => $delivery_date,
+						'start' => isset($item['_delivery_time']) && !empty($item['_delivery_time']) ? $delivery_date.'T'.date('H:i:s', strtotime($item['_delivery_time']) ): $delivery_date,
 					);
 				}
 			}
