@@ -183,6 +183,10 @@ class Woocommerce_Food_Booking {
 		$this->loader->add_filter( 'woocommerce_order_item_get_formatted_meta_data', $plugin_public, 'order_item_formatted_meta_data', 10, 2 );
 		// $this->loader->add_filter( 'woocommerce_order_item_display_meta_value', $plugin_public, 'order_item_display_meta_key' );
 		$this->loader->add_filter( 'woocommerce_add_to_cart_validation', $plugin_public, 'delivery_date_time_validation', 10, 3 );
+		// $this->loader->add_filter( 'woocommerce_loop_add_to_cart_link', $plugin_public, 'add_to_car_button_in_loop'	);
+		$this->loader->add_filter( 'woocommerce_product_add_to_cart_text', $plugin_public, 'change_add_to_cart_text', 10, 2);
+		$this->loader->add_filter( 'woocommerce_product_add_to_cart_url', $plugin_public, 'change_add_to_cart_url', 10, 2);
+		$this->loader->add_action( 'woocommerce_cart_actions', $plugin_public, 'view_cart_delivery_calendar');
 
 	}
 

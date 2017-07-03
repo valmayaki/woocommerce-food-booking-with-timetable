@@ -29,11 +29,24 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 	$(document).ready(function(){
-
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
 		$('#order-delivery-calendar').fullCalendar({
 		    dayClick: function() {
 		        alert('a day has been clicked!');
 		    },
+		    week: true,
+	    	day: true,
+	    	agenda: false,
+		    height: 400,
+		    header: {
+	    		left: 'prev, next today',
+	    		center: 'title',
+	    		right: 'month, agendaWeek, agendaDay',
+	    		ignoreTimezone: false    		
+	    	},
 		    events: ajaxurl+'?action=order_items_with_delivery_date'
 		});
 	})

@@ -183,9 +183,20 @@ class Woocommerce_Food_Booking_Admin {
 
 	public function get_order_with_delivery_date()
 	{
+		global $wpdb;
+		$sql = "SELECT 
+		`items`.`order_id` as `order_id` 
+		FROM `{$wpdb->prefix}woocommerce_order_items` AS `items` 
+		INNER JOIN `{$wpdb->prefix}woocommerce_order_itemmeta` AS `itemmeta` ON `items`.`order_item_id` = `itemmeta`.`order_item_id` 
+		WHERE `items`.`order_item_type` IN('line_item' 
+			AND `itemmeta`.`meta_key` IN('_product_id' 
+		GROUP BY `items`.`order_id`";
 
 		$orders = wc_get_orders(array(
 			'numberposts' => -1,
+			'post_in' => array_values(
+				(array)$wpdb->get_results($sql, ARRAY_N)
+			)
 		));
 		$item_events = array();
 		foreach($orders as $order){

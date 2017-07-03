@@ -117,6 +117,11 @@ class Woocommerce_Food_Booking_Public {
 
 	}
 
+	/**
+	 * Adds the delivery date and time form to single product
+	 * 
+	 * @return void
+	 */
 	public function before_add_to_cart()
 	{
 		//@note if( has_term( array('term1', 'term2', 'term3'), 'product_cat' ) )
@@ -165,6 +170,17 @@ class Woocommerce_Food_Booking_Public {
 			</script>
 		<?php
 	}
+
+	/**
+	 * Validation that delivery date and time is  provided 
+	 * before adding to cart
+	 * 
+	 * @param  bool $true       existing boolean state of validation
+	 * @param  int $product_id
+	 * @param  int $quantity
+	 * 
+	 * @return bool             return whether to add to cart or not
+	 */
 	function delivery_date_time_validation($true, $product_id, $quantity) { 
 		//@todo add check to know if delivery date or time is enabled for product
 		// probably use term to check its is enabled for term
@@ -179,6 +195,14 @@ class Woocommerce_Food_Booking_Public {
 	    return true;
 	}
 
+	/**
+	 * Add delivery date and time to cart item meta when product is added to cart
+	 * 
+	 * @param  array  $cart_item_meta
+	 * @param  int  $product_id
+	 *
+	 * @return array
+	 */
 	public function add_date_time_to_cart_item($cart_item_meta, $product_id)
 	{
 		//@todo add check to know if delivery date or time is enabled for product
@@ -201,8 +225,13 @@ class Woocommerce_Food_Booking_Public {
 	}
 
 	/**
-    * This function displays the Delivery details on cart page, checkout page.
-    */
+	 * This function displays the Delivery details on cart page, checkout page.
+	 * 
+	 * @param  array $other_data
+	 * @param  array $cart_item
+	 * 
+	 * @return array
+	 */
 	public function display_delivery_date_time($other_data, $cart_item)
 	{
 		if ( isset( $cart_item[ 'wc_delivery_date_time' ] ) ) {
@@ -229,9 +258,19 @@ class Woocommerce_Food_Booking_Public {
 	}
 
 	/**
-    * This function updates the database for the delivery details and adds delivery fields on the Order Received page,
-    * WooCommerce->Orders when an order is placed for WooCommerce version greater than 2.0.
-    */
+	 * This function updates the database for the delivery details 
+	 * and adds delivery fields on the Order Received page, 
+	 * WooCommerce->Orders when an order is placed for WooCommerce version greater than 2.0.
+	 *
+	 * Update order item's meta with delivery date and time
+	 * 
+	 * @param  WC_Order_Item $item 
+	 * @param  int $cart_item_key
+	 * @param  array $values
+	 * @param  WC_Order $order
+	 * 
+	 * @return void
+	 */
 	public function checkout_update_order_meta_with_delivery_datetime($item, $cart_item_key, $values, $order)
 	{
 		if (!isset($values['wc_delivery_date_time']) || empty($values['wc_delivery_date_time'])){
@@ -256,6 +295,15 @@ class Woocommerce_Food_Booking_Public {
 		return $array;	
 	}
 
+	/**
+	 * Displays hidden delivery date for order item in order view
+	 * 
+	 * @param  string $html
+	 * @param  WC_ORder_item $item
+	 * @param  array $args
+	 * 
+	 * @return string
+	 */
 	public function display_item_meta($html, $item, $args)
 	{
 		$product = is_callable( array( $item, 'get_product' ) ) ? $item->get_product() : $item->product;
@@ -278,6 +326,15 @@ class Woocommerce_Food_Booking_Public {
 
         return $html;	
 	}
+
+	/**
+	 * Formats the hidden delivery date for order item meta for display in admin
+	 * 
+	 * @param  array $formatted_meta
+	 * @param  WC_Order_Item $item
+	 * 
+	 * @return array
+	 */
 	public function order_item_formatted_meta_data($formatted_meta, $item)
 	{
 		foreach ($formatted_meta as $value) {
@@ -290,6 +347,74 @@ class Woocommerce_Food_Booking_Public {
 			}
 		}
 		return $formatted_meta;
+	}
+
+	/**
+	 * Changes the add to cart button
+	 */
+	public function add_to_car_button_in_loop()
+	{
+		//@todo add a modal display for selecting the delivery date and time but without using pickadate
+		global $product;
+		return sprintf( '<a rel="nofollow" href="%s" data-quantity="%s" data-product_id="%s" data-product_sku="%s" class="%s">%s</a>',
+			esc_url($product->get_permalink() ),
+			esc_attr( isset( $quantity ) ? $quantity : 1 ),
+			esc_attr( $product->get_id() ),
+			esc_attr( $product->get_sku() ),
+			esc_attr( isset( $class ) ? $class : 'button' ),
+			esc_html( $product->add_to_cart_text() )
+		);
+	}
+
+	/**
+	 * Changes the art to cart button text
+	 * 
+	 * @param  string $text
+	 * @param  WC_Product $product
+	 * 
+	 * @return string
+	 */
+	public function change_add_to_cart_text($text, $product)
+	{
+		return __('Select Delivery Date');
+	}
+
+	/**
+	 * Changes the url for add to cart button in loop
+	 * @param  string $url
+	 * @param  WC_Product $product
+	 * 
+	 * @return string
+	 */
+	public function change_add_to_cart_url($url, $product)
+	{
+		return $product->get_permalink();
+	}
+
+	/**
+	 * Get items with delivery date and time
+	 * 
+	 * @return array
+	 */
+	public function get_cart_items_with_delivery_date()
+	{
+		global $woocommerce;
+		$items_with_delivery_date= array();
+		$cart_items = $woocommerce->cart->get_cart();
+		foreach ($cart_items as $cart_item_key => $cart_item) {
+			if(isset($cart_item['wc_delivery_date_time'])){
+				$items_with_delivery_date[$cart_item_key] = $cart_item;
+			}
+		}
+		return $items_with_delivery_date;
+	}
+
+	public function view_cart_delivery_calendar()
+	{
+		?>
+		<button type="button" class="button"  id="show-calendar"><?php esc_attr_e( 'Delivery Calendar', 'woocommerce' ); ?></button>
+		<?php
+
 	}
 
 }
